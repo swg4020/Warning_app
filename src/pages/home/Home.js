@@ -97,7 +97,7 @@ export const Home = () => {
           <Title>{keywords} 대피소 목록</Title>
           {mainData.map((data) => (
             <Con key={data.acmdfclty_sn}>
-              <Link to={`/detail/${data.acmdfclty_sn}`}>
+              <Link to={`/detail/${data.vt_acmd_psbl_nmpr}/${data.ctprvn_nm}`}>
                 <Bg>
                   <img src={`${URL_IMG.park}`} alt={data?.acmdfclty_se_nm} />
                 </Bg>
