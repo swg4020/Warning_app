@@ -9,6 +9,9 @@ const SHeader = styled.header`
   width: 100%;
   margin: 0 auto;
   background-color: ${glovalcolor.color};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Logo = styled.div`
@@ -19,6 +22,8 @@ font-weight: 700;
   }
 `;
 
+const Search = styled.h2``;
+
 export const Header = () => {
   return (
     <SHeader>
@@ -27,6 +32,11 @@ export const Header = () => {
           <RiAlarmWarningLine />
           Warning
         </Logo>
+      </Link>
+      <Link to={"/search/"}>
+        <Search>
+          search
+        </Search>
       </Link>
     </SHeader>
   );

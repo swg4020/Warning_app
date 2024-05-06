@@ -15,9 +15,17 @@ const instanc = axios.create({
 });
 
 export const getAreaList = ({ queryKey }) => {
-  const [getArea4List, keyword] = queryKey;
+  const [getArea4List, keywords] = queryKey;
   return instanc
-    .get(`${getArea4List}?ctprvn_nm=${keyword}`)
+    .get(`${getArea4List}?ctprvn_nm=${keywords}`)
+    .then((res) => res.data);
+};
+
+export const getSearchAreaList = ({ queryKey }) => {
+  const [getArea4List, keyword] = queryKey;
+  const search = `ctprvn_nm=${keyword}`;
+  return instanc
+    .get(`${getArea4List}?${search}`)
     .then((res) => res.data);
 };
 

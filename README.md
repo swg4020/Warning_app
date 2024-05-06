@@ -5,7 +5,7 @@
 - styled /npm i styled-components
 - reset / npm i styled-reset
 - icons / npm i react-icons
-
+- scroll / npm i react-infinite-scroll-component
 ## API
 
 - API 이름 : 행정안전부_지진 옥외대피장소

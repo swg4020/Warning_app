@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAreaList } from "../../api";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { glovalcolor, glovalpadding } from "../../components/GlobalStyled";
 import { Link } from "react-router-dom";
@@ -15,29 +13,6 @@ const Container = styled.div`
   padding: ${glovalpadding.paddingO};
   margin: 0 auto;
   background-color: ${glovalcolor.color};
-  position: relative;
-`;
-const Form = styled.form`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  border: 1px solid #f1f1f1;
-  border-radius: 20px;
-  input {
-    all: unset;
-    width: 80%;
-    height: 35px;
-    padding: 0 15px;
-    font-weight: 700;
-  }
-`;
-const Text = styled.p`
-  position: absolute;
-  top: 70px;
-  left: 45px;
-  color: crimson;
-  font-size: 14px;
-  font-weight: 600;
 `;
 
 const ConWrap = styled.div``;
@@ -97,48 +72,30 @@ const Bg = styled.div`
   }
 `;
 
-export const Home = () => {
-  const [keyword, setkeyword] = useState("부산광역시");
+const Title = styled.h2`
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 10px;
+`;
 
-  const getList = useQuery({
-    queryKey: ["getArea4List", keyword],
+export const Home = () => {
+  const keywords = "부산광역시";
+
+  const getLists = useQuery({
+    queryKey: ["getArea4List", keywords],
     queryFn: getAreaList,
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
+  const mainData = getLists?.data?.EarthquakeOutdoorsShelter[1]?.row;
 
-  const onSubmit = (data) => {
-    const { search: Sdata } = data;
-    setkeyword(Sdata);
-    reset();
-  };
-  console.log(keyword);
-  const searchData = getList?.data?.EarthquakeOutdoorsShelter[1]?.row;
-  console.log(searchData);
+  console.log(mainData);
+
   return (
     <Container>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register("search", {
-            required: "내용을 입력해주세요.",
-          })}
-          type="text"
-          placeholder="지역을 입력해주세요(부산광역시)"
-        />
-      </Form>
-      {errors ? <Text>{errors?.search?.message}</Text> : ""}
-
-
-
-
-      {searchData && (
+      {mainData && (
         <ConWrap>
-          {searchData.map((data) => (
+          <Title>{keywords} 대피소 목록</Title>
+          {mainData.map((data) => (
             <Con key={data.acmdfclty_sn}>
               <Link to={`/detail/${data.acmdfclty_sn}`}>
                 <Bg>
