@@ -13,7 +13,14 @@ const instanc = axios.create({
     type: `JSON`,
   },
 });
-
+const instan = axios.create({
+  baseURL: "http://apis.data.go.kr/1741000/EmergencyAssemblyArea_Earthquake4/",
+  params: {
+    serviceKey: apiKey,
+    numOfRows: 10,
+    type: `JSON`,
+  },
+});
 export const getAreaList = ({ queryKey }) => {
   const [getArea4List, keywords] = queryKey;
   return instanc
@@ -22,10 +29,11 @@ export const getAreaList = ({ queryKey }) => {
 };
 
 export const getSearchAreaList = ({ queryKey }) => {
-  const [getArea4List, keyword] = queryKey;
+  const [getArea4List, keyword, page] = queryKey;
   const search = `ctprvn_nm=${keyword}`;
-  return instanc
-    .get(`${getArea4List}?${search}`)
+  // const pages = Number(page);
+  return instan
+    .get(`${getArea4List}?${search}&pageNo=${page}`)
     .then((res) => res.data);
 };
 

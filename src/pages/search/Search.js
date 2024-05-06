@@ -54,8 +54,10 @@ const Bg = styled.div``;
 
 export const Search = () => {
   const [keyword, setkeyword] = useState("");
+  const [page, setpage] = useState(1);
+
   const getSearchList = useQuery({
-    queryKey: ["getArea4List", keyword],
+    queryKey: ["getArea4List", keyword, page],
     queryFn: getSearchAreaList,
   });
   const {
