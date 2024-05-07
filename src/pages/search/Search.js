@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
 import { URL_IMG } from "../../components/url";
 import styled from "styled-components";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { set, useForm } from "react-hook-form";
 import { getSearchAreaList } from "../../api";
 import { glovalcolor, glovalpadding } from "../../components/GlobalStyled";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Container = styled.section`
   max-width: 450px;
   width: 100%;
-  min-height: 100vh;
-  height: 100%;
+  /* min-height: 100vh;
+  height: 100%; */
   padding: ${glovalpadding.paddingO};
   margin: 0 auto;
   background-color: ${glovalcolor.color};
@@ -41,7 +42,8 @@ const Text = styled.p`
   font-weight: 600;
 `;
 
-const ConWrap = styled.div`
+const ConWrap = styled.div``;
+const Cons = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 30px;
@@ -54,12 +56,15 @@ const Bg = styled.div``;
 
 export const Search = () => {
   const [keyword, setkeyword] = useState("");
-  const [page, setpage] = useState(1);
+  const [pages, setpage] = useState(1);
+  const [result, setResult] = useState();
+  const [resultsData, setResultsData] = useState();
 
   const getSearchList = useQuery({
-    queryKey: ["getArea4List", keyword, page],
+    queryKey: ["getArea4List", keyword, pages],
     queryFn: getSearchAreaList,
   });
+
   const {
     register,
     handleSubmit,
@@ -72,8 +77,43 @@ export const Search = () => {
     setkeyword(Sdata);
     reset();
   };
+
   const searchData = getSearchList?.data?.EarthquakeOutdoorsShelter[1]?.row;
-  console.log(searchData);
+  useEffect(() => {
+    (async () => {
+      try {
+        setResult(searchData);
+        setResultsData(getSearchList);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+  let page = resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[1]?.pageNo;
+  let pagedata = Number(page);
+  let total =
+    resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[0].totalCount;
+  const fetchData = () => {
+    try {
+      let page = Number(pages);
+      // setpage(pagei);
+      setpage((page += 1));
+      if (pages <= total) {
+        // const getSearchLists = useInfiniteQuery({
+        //   queryKey: ["getArea4List", keyword, pagei],
+        //   queryFn: getSearchAreaList,
+        // });
+        // const searchData = getSearchLists?.data?.EarthquakeOutdoorsShelter[1]?.row;
+        setResult(result.concat(searchData));
+        console.log(result);
+      }
+      console.log(page);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(getSearchList?.data?.EarthquakeOutdoorsShelter[1]?.row);
   return (
     <Container>
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -86,27 +126,35 @@ export const Search = () => {
         />
       </Form>
       {errors ? <Text>{errors?.search?.message}</Text> : ""}
+      {/* {keyword ? <Text>"{keyword}"의 검색 결과</Text> : ""} */}
       {keyword === "" ? (
         ""
       ) : (
         <>
           {searchData && (
             <ConWrap>
-              {keyword ? <Text>"{keyword}"의 검색 결과</Text> : ""}
-              {searchData.map((data) => (
-                <Con key={data.acmdfclty_sn}>
-                  <Link to={`/detail/${data.acmdfclty_sn}`}>
-                    <Bg>
-                      <img
-                        src={`${URL_IMG.park}`}
-                        alt={data?.acmdfclty_se_nm}
-                      />
-                    </Bg>
-                    <h3>{data?.vt_acmdfclty_nm}</h3>
-                    <p>관할청 : {data?.sgg_nm}</p>
-                  </Link>
-                </Con>
-              ))}
+              <InfiniteScroll
+                dataLength={searchData.length}
+                next={fetchData}
+                hasMore={true}
+              >
+                <Cons>
+                  {result?.map((data) => (
+                    <Con key={data.acmdfclty_sn}>
+                      <Link to={`/detail/${data.acmdfclty_sn}`}>
+                        <Bg>
+                          <img
+                            src={`${URL_IMG.park}`}
+                            alt={data?.acmdfclty_se_nm}
+                          />
+                        </Bg>
+                        <h3>{data?.vt_acmdfclty_nm}</h3>
+                        <p>관할청 : {data?.sgg_nm}</p>
+                      </Link>
+                    </Con>
+                  ))}
+                </Cons>
+              </InfiniteScroll>
             </ConWrap>
           )}
         </>

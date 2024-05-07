@@ -23,28 +23,23 @@ export const Detail = () => {
   });
 
   const data = getLists?.data?.EarthquakeOutdoorsShelter[1]?.row;
-//   const total =
-//     data &&
-//     data.filter((res) => console.log(res.vt_acmd_psbl_nmpr === num ? res : ""));
-//   console.log(data?.ctprvn_nm)
+  console.log(data);
 
-
-
-
-  return (
-    <ConWrap>
-      {/* {tdata && (
-        <Con>
-          <Bg>
-            <img src={`${URL_IMG.park}`} alt={tdata?.acmdfclty_se_nm} />
-          </Bg>
-          <Item>
-            <h3>{tdata?.vt_acmdfclty_nm}</h3>
-            <p>지역 : {tdata?.ctprvn_nm}</p>
-            <p>관할청 : {tdata?.sgg_nm}</p>
-          </Item>
-        </Con>
-      )} */}
-    </ConWrap>
-  );
+  return;
+  // (
+  //   <ConWrap>
+  //     {tdata && (
+  //       <Con>
+  //         <Bg>
+  //           <img src={`${URL_IMG.park}`} alt={tdata?.acmdfclty_se_nm} />
+  //         </Bg>
+  //         <Item>
+  //           <h3>{tdata?.vt_acmdfclty_nm}</h3>
+  //           <p>지역 : {tdata?.ctprvn_nm}</p>
+  //           <p>관할청 : {tdata?.sgg_nm}</p>
+  //         </Item>
+  //       </Con>
+  //     )}
+  //   </ConWrap>
+  // );
 };

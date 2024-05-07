@@ -29,11 +29,11 @@ export const getAreaList = ({ queryKey }) => {
 };
 
 export const getSearchAreaList = ({ queryKey }) => {
-  const [getArea4List, keyword, page] = queryKey;
+  const [getArea4List, keyword, pages] = queryKey;
   const search = `ctprvn_nm=${keyword}`;
   // const pages = Number(page);
   return instan
-    .get(`${getArea4List}?${search}&pageNo=${page}`)
+    .get(`${getArea4List}?${search}&pageNo=${pages}`)
     .then((res) => res.data);
 };
 
