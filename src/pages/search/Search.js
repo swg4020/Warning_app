@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { URL_IMG } from "../../components/url";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
@@ -11,8 +10,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const Container = styled.section`
   max-width: 450px;
   width: 100%;
-  /* min-height: 100vh;
-  height: 100%; */
+  min-height: 100vh;
+  height: 100%;
   padding: ${glovalpadding.paddingO};
   margin: 0 auto;
   background-color: ${glovalcolor.color};
@@ -48,6 +47,9 @@ const Cons = styled.div`
   grid-template-columns: repeat(2, 1fr);
   row-gap: 30px;
   column-gap: 10px;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Con = styled.div``;
@@ -60,11 +62,20 @@ export const Search = () => {
   const [result, setResult] = useState();
   const [resultsData, setResultsData] = useState();
 
-  const getSearchList = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["getArea4List", keyword, pages],
     queryFn: getSearchAreaList,
   });
 
+  // console.log(isLoading)
+  // console.log(data)
+  console.log(result);
+
+  const searchData = data?.EarthquakeOutdoorsShelter[1]?.row;
+  let page = resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[1]?.pageNo;
+  let pagedata = Number(page);
+  let total =
+    resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[0].totalCount;
   const {
     register,
     handleSubmit,
@@ -78,42 +89,37 @@ export const Search = () => {
     reset();
   };
 
-  const searchData = getSearchList?.data?.EarthquakeOutdoorsShelter[1]?.row;
   useEffect(() => {
-    (async () => {
+    (() => {
       try {
         setResult(searchData);
-        setResultsData(getSearchList);
+        setResultsData(data);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, []);
-  let page = resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[1]?.pageNo;
-  let pagedata = Number(page);
-  let total =
-    resultsData?.data?.EarthquakeOutdoorsShelter[0]?.head[0].totalCount;
+  }, [data, page]);
+
   const fetchData = () => {
     try {
       let page = Number(pages);
-      // setpage(pagei);
-      setpage((page += 1));
+      setpage(page + 1);
+      const { data, isLoading } = useInfiniteQuery({
+        queryKey: ["getArea4List", keyword, pages],
+        queryFn: getSearchAreaList,
+      });
+      const fData = data?.EarthquakeOutdoorsShelter[1]?.row;
       if (pages <= total) {
-        // const getSearchLists = useInfiniteQuery({
-        //   queryKey: ["getArea4List", keyword, pagei],
-        //   queryFn: getSearchAreaList,
-        // });
-        // const searchData = getSearchLists?.data?.EarthquakeOutdoorsShelter[1]?.row;
-        setResult(result.concat(searchData));
+        setResult(result.concat(fData));
+        console.log(data);
         console.log(result);
       }
-      console.log(page);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(getSearchList?.data?.EarthquakeOutdoorsShelter[1]?.row);
+  // console.log(data?.data?.EarthquakeOutdoorsShelter[1]?.row);
   return (
     <Container>
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -131,31 +137,27 @@ export const Search = () => {
         ""
       ) : (
         <>
-          {searchData && (
+          {result ? (
             <ConWrap>
-              <InfiniteScroll
-                dataLength={searchData.length}
-                next={fetchData}
-                hasMore={true}
-              >
+              <InfiniteScroll dataLength={10} next={fetchData} hasMore={true}>
                 <Cons>
                   {result?.map((data) => (
                     <Con key={data.acmdfclty_sn}>
-                      <Link to={`/detail/${data.acmdfclty_sn}`}>
-                        <Bg>
-                          <img
-                            src={`${URL_IMG.park}`}
-                            alt={data?.acmdfclty_se_nm}
-                          />
-                        </Bg>
-                        <h3>{data?.vt_acmdfclty_nm}</h3>
-                        <p>관할청 : {data?.sgg_nm}</p>
-                      </Link>
+                      <Bg>
+                        <img
+                          src={`${URL_IMG.park}`}
+                          alt={data?.acmdfclty_se_nm}
+                        />
+                      </Bg>
+                      <h3>{data?.vt_acmdfclty_nm}</h3>
+                      <p>관할청 : {data?.sgg_nm}</p>
                     </Con>
                   ))}
                 </Cons>
               </InfiniteScroll>
             </ConWrap>
+          ) : (
+            "222222222"
           )}
         </>
       )}
